@@ -94,37 +94,37 @@ Customer::Customer(int id, const string &username, const string &password, const
 {
 }
 
+
+Passenger::Passenger(int id, const string passengerId, const string name, Customer *customer, PassengerType passengerType)
+    : Person(id, "", "", name, "", "", false), customer(customer), passengerId(passengerId), passengerType(passengerType)
+{
+}
+
 Passenger::Passenger()
     : Person(), customer(nullptr), passengerId(""), passengerType(PassengerType::ADULT)
 {
 }
 
-Customer *Passenger::getCustomer() const
-{
+Customer* Passenger::getCustomer() const {
     return customer;
 }
 
-std::string Passenger::getPassengerId() const
-{
-    return passengerId;
-}
-
-PassengerType Passenger::getPassengerType() const
-{
-    return passengerType;
-}
-
-void Passenger::setCustomer(Customer *newCustomer)
-{
+void Passenger::setCustomer(Customer *newCustomer) {
     customer = newCustomer;
 }
 
-void Passenger::setPassengerId(const std::string &newPassengerId)
-{
+string Passenger::getPassengerId() const {
+    return passengerId;
+}
+
+void Passenger::setPassengerId(const std::string &newPassengerId) {
     passengerId = newPassengerId;
 }
 
-void Passenger::setPassengerType(PassengerType newPassengerType)
-{
+PassengerType Passenger::getPassengerType() const {
+    return passengerType;
+}
+
+void Passenger::setPassengerType(PassengerType newPassengerType) {
     passengerType = newPassengerType;
 }
