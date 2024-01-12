@@ -1,1 +1,1 @@
-5002 102 m 3002 Istanbul Ankara 32016 First Class 0
+5001 101 1 3001 Istanbul Ankara 26680 First Class 0

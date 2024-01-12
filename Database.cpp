@@ -329,3 +329,47 @@ void deleteFlight(int deletedFlightId)
 
     cout << "Flight with ID " << deletedFlightId << " deleted successfully." << endl;
 }
+
+void displayNotifications(const Customer* customerAccount, const vector<Reservation>& reservations, bool& hasNotification, int& trigger) {
+    cout << "\n----------       - Notifications -       ----------\n";
+
+    if (trigger == 0) {
+        for (const Reservation& reservation : reservations) {
+            if (reservation.getPassenger()->getCustomer() == customerAccount && reservation.getFlight()->getIsDelayed()) {
+                hasNotification = true;
+                cout << "You have a notification.\n";
+                cout << "Dear " << customerAccount->getName() << ",\nYour "
+                          << reservation.getFlight()->getDepartureCity() << " - "
+                          << reservation.getFlight()->getArrivalCity() << " flight number "
+                          << reservation.getFlight()->getFlightId() << " was delayed.\n"
+                          << "We are sorry for the delay, we wish you a pleasant flight!\n";
+
+                trigger = 1;
+                break;
+            }
+        }
+
+        if (!hasNotification) {
+            cout << "\nYou have no notifications.\n";
+        }
+    } else {
+        // Display existing notifications or perform other actions
+        for (const Reservation& reservation : reservations) {
+            if (reservation.getPassenger()->getCustomer() == customerAccount && reservation.getFlight()->getIsDelayed()) {
+                hasNotification = true;
+                cout << "You have existing notifications.\n";
+                cout << "Dear " << customerAccount->getName() << ",\nYour "
+                          << reservation.getFlight()->getDepartureCity() << " - "
+                          << reservation.getFlight()->getArrivalCity() << " flight number "
+                          << reservation.getFlight()->getFlightId() << " was delayed.\n"
+                          << "We are sorry for the delay, we wish you a pleasant flight!\n";
+                // Additional actions related to existing notifications can be added here
+                break;
+            }
+        }
+
+        if (!hasNotification) {
+            cout << "\nYou have no existing notifications.\n";
+        }
+    }
+}

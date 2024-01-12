@@ -151,19 +151,19 @@ int main()
             case 1:
                 cout << "\n----------       - Flight Creation Process -       ----------\n";
                 cout << "Please enter flight's information.\n";
-                cout << "\nPlease enter the flight's date:   ";
+                cout << "Please enter the flight's date:   ";
                 cin >> date;
-                cout << "\nPlease enter flight's time:   ";
+                cout << "Please enter flight's time:   ";
                 cin >> time;
-                cout << "\nPlease enter flight's capacity:   ";
+                cout << "Please enter flight's capacity:   ";
                 cin >> capacity;
-                cout << "\nPlease enter flight's base fare:   ";
+                cout << "Please enter flight's base fare:   ";
                 cin >> baseFare;
-                cout << "\nPlease enter departure city:   ";
+                cout << "Please enter departure city:   ";
                 cin >> departureCity;
-                cout << "\nPlease enter arrival city:   ";
+                cout << "Please enter arrival city:   ";
                 cin >> arrivalCity;
-                cout << "\nPlease choose an Airline Company: (0: Pegasus, 1: Turkish Airlines, 2: Anadolu Jet)   ";
+                cout << "Please choose an Airline Company: (0: Pegasus, 1: Turkish Airlines, 2: Anadolu Jet)   ";
                 cin >> aircomp;
                 switch (aircomp)
                 {
@@ -189,15 +189,15 @@ int main()
             case 2:
                 cout << "\n----------       - Customer Creation Process -       ----------\n";
                 cout << "Please enter customer's information.\n";
-                cout << "\nPlease enter customer's username:   ";
+                cout << "Please enter customer's username:   ";
                 cin >> username;
-                cout << "\nPlease enter customer's password:   ";
+                cout << "Please enter customer's password:   ";
                 cin >> password;
-                cout << "\nPlease enter customer's name:   ";
+                cout << "Please enter customer's name:   ";
                 cin >> name;
-                cout << "\nPlease enter customer's email:   ";
+                cout << "Please enter customer's email:   ";
                 cin >> email;
-                cout << "\nPlease enter customer's phone:   ";
+                cout << "Please enter customer's phone:   ";
                 cin >> phone;
                 createCustomer(username, password, name, email, phone);
                 writeCustomersToFile();
@@ -207,7 +207,7 @@ int main()
             case 3:
                 cout << "\n----------       - Reservation Creation Process -       ----------\n";
                 cout << "Please enter reservation's information:\n";
-                cout << "\nPlease enter the flight ID for reservation:   ";
+                cout << "Please enter the flight ID for reservation:   ";
                 cin >> flightId;
                 for (Flight &flight : flights)
                 {
@@ -219,7 +219,7 @@ int main()
                 }
                 if (selectedFlight != nullptr)
                 {
-                    cout << "\nPlease enter the passenger ID for reservation:   ";
+                    cout << "Please enter the passenger ID for reservation:   ";
                     cin >> index;
 
                     for (Passenger p : passengers)
@@ -255,7 +255,6 @@ int main()
                     cout << "\nFlight not found!\n";
                     break;
                 }
-
                 break;
 
             case 4:
@@ -272,9 +271,9 @@ int main()
                     cout << "Arrival City: " << flight.getArrivalCity() << '\n';
                     cout << "Airline Company: " << flight.airlineToString(flight.getAirlineCompany()) << '\n';
                     cout << "Is Delayed: " << (flight.getIsDelayed() ? "Yes" : "No") << '\n';
-                    cout << "\n--------------------------\n";
+                    
                 }
-                cout << "Please enter the flight ID to delete:   ";
+                cout << "\n\nPlease enter the flight ID to delete:   ";
                 cin >> flightId;
                 deleteFlight(flightId);
                 writeFlightsToFile();
@@ -287,7 +286,7 @@ int main()
                 {
                     cout << "Customer ID: " << customer.getId() << '\n';
                     cout << "Customer name: " << customer.getName() << '\n';
-                    cout << "\n--------------------------\n";
+                    cout << "\n----------\n";
                 }
                 cout << "\n\nPlease enter the customer ID to delete:   ";
                 cin >> customerId;
@@ -330,9 +329,9 @@ int main()
                     cout << "\nFlight not found!\n";
                     break;
                 }
-                cout << "\nPlease enter the new date for the flight:   ";
+                cout << "Please enter the new date for the flight:   ";
                 cin >> date;
-                cout << "\nPlease enter the new time for the flight:   ";
+                cout << "Please enter the new time for the flight:   ";
                 cin >> time;
 
                 if (updateFlight(&updatedFlight, &date, &time))
@@ -357,7 +356,6 @@ int main()
                     break;
                 }
                 delayedFlight->setIsDelayed(true);
-                trigger = 0;
                 writeFlightsToFile();
                 cout << "\nDelay added to the flight successfully!\n";
                 break;
@@ -663,50 +661,7 @@ int main()
                 break;
             case 7:
 
-                cout << "\n----------       - Notifications -       ----------\n";
-
-                hasNotification = false;
-
-                if (trigger == 0)
-                {
-                    for (const Reservation &reservation : reservations)
-                    {
-                        if (reservation.getPassenger()->getCustomer() == customerAccount && reservation.getFlight()->getIsDelayed())
-                        {
-                            hasNotification = true;
-                            cout << "You have a notification.\n";
-                            cout << "Dear " << customerAccount->getName() << ",\nYour " << reservation.getFlight()->getDepartureCity() << " - "
-                                 << reservation.getFlight()->getArrivalCity() << " flight number " << reservation.getFlight()->getFlightId()
-                                 << " was delayed.\nWe are sorry for the delay, we wish you a pleasant flight!\n";
-
-                            trigger = 1;
-                            break;
-                        }
-                    }
-
-                    if (!hasNotification)
-                    {
-                        cout << "\nYou have no notifications.\n";
-                    }
-                    break;
-                }
-                for (const Reservation &reservation : reservations)
-                {
-                    if (reservation.getPassenger()->getCustomer() == customerAccount && reservation.getFlight()->getIsDelayed())
-                    {
-                        hasNotification = true;
-                        cout << "You have a notification.\n";
-                        cout << "Dear " << customerAccount->getName() << ",\nYour " << reservation.getFlight()->getDepartureCity() << " - "
-                             << reservation.getFlight()->getArrivalCity() << " flight number " << reservation.getFlight()->getFlightId()
-                             << " was delayed.\nWe are sorry for the delay, we wish you a pleasant flight!\n";
-                        break;
-                    }
-                }
-
-                if (!hasNotification)
-                {
-                    cout << "\nYou have no notifications.\n";
-                }
+                displayNotifications(customerAccount, reservations, hasNotification, trigger);
                 break;
 
             case 8:
