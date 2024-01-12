@@ -1,62 +1,55 @@
-#include "Database.h.cpp"
 #include <string>
 #include <iostream>
 #include <vector>
+#include "File.cpp"
 using namespace std;
 
 #define GENERATE_CUSTOMER_ID() \
     ([]() { \
         static int lastCustomerId = 1000; \
-        return ++lastCustomerId; \
-    })()
+        return ++lastCustomerId; })()
 
 #define GENERATE_PASSENGER_ID() \
     ([]() { \
         static int lastPassengerId = 100; \
-        return ++lastPassengerId; \
-    })()
+        return ++lastPassengerId; })()
 
 #define GENERATE_FLIGHT_ID() \
     ([]() { \
         static int lastFlightId = 3000; \
-        return ++lastFlightId; \
-    })()
+        return ++lastFlightId; })()
 
 #define GENERATE_RESERVATION_ID() \
     ([]() { \
         static int lastReservationId = 5000; \
-        return ++lastReservationId; \
-    })()
-    
+        return ++lastReservationId; })()
 
 float calculateReservationPrice(const Flight *flight, const Passenger *passenger, TicketType ticketType)
 {
     float baseFare = flight->getBaseFare();
 
-    if (passenger->getPassengerType() == PassengerType::CHILD)
+    if (passenger->getPassengerType() == PassengerType::ADULT)
     {
-        baseFare *= 0.8;
+        baseFare *= 5.8;
     }
 
     if (ticketType == TicketType::FIRST_CLASS)
     {
-        baseFare *= 1.2;
+        baseFare *= 9.2;
     }
 
     return baseFare;
 }
 
-
 bool isFlightCapacityFull(const Flight *flight)
 {
-    const vector<int> &capacity = flight->getCapacity();
-    for (int seatsLeft : capacity)
+    const int capacity = flight->getCapacity();
+
+    if (capacity > 0)
     {
-        if (seatsLeft > 0)
-        {
-            return false;
-        }
+        return false;
     }
+
     return true;
 }
 
@@ -69,16 +62,27 @@ Customer createCustomer(const string &username, const string &password, const st
     return customer;
 }
 
-Passenger createPassenger(const string passengerId, const string name, Customer *customer, PassengerType passengerType)
+Passenger *createPassenger(const string passengerId, const string name, Customer *customer, PassengerType passengerType, int flightId)
 {
+    for (const Reservation &reservation : reservations)
+    {
+        if (passengerId == reservation.getPassenger()->getPassengerId() && reservation.getFlight()->getFlightId() == flightId)
+        {
+            cout << "This flight has already been booked for this person. You cannot book the same flight a second time." << endl;
+            return nullptr;
+        }
+    }
+
     int id = GENERATE_PASSENGER_ID();
-    Passenger passenger(id, passengerId, name, customer, passengerType);
-    passengers.push_back(passenger);
+    Passenger newPassenger(id, passengerId, name, customer, passengerType);
+    passengers.push_back(newPassenger);
     passengerCount++;
-    return passenger;
+
+    // Yeni yolcu başarıyla oluşturuldu, dolayısıyla bu noktaya ulaşıldığında fonksiyonun normal şekilde tamamlanması sağlanır.
+    return &passengers.back(); // Eklenen son yolcu işaretçisi döndürülüyor.
 }
 
-Flight createFlight(const string &date, const string &time, const vector<int> &capacity, float baseFare, const string &departureCity, const string &arrivalCity,
+Flight createFlight(const string &date, const string &time, const int capacity, float baseFare, const string &departureCity, const string &arrivalCity,
                     AirlineCompany airlineCompany, bool isDelayed)
 {
     int id = GENERATE_FLIGHT_ID();
@@ -88,8 +92,7 @@ Flight createFlight(const string &date, const string &time, const vector<int> &c
     return flight;
 }
 
-void createReservation(Flight *flight, Passenger *passenger, TicketType ticketType,
-                              bool isCheckIn, bool isFlightFull)
+void createReservation(Flight *flight, Passenger *passenger, TicketType ticketType)
 {
     if (isFlightCapacityFull(flight))
     {
@@ -99,39 +102,41 @@ void createReservation(Flight *flight, Passenger *passenger, TicketType ticketTy
 
     int id = GENERATE_RESERVATION_ID();
     float constantPrice = calculateReservationPrice(flight, passenger, ticketType);
-    Reservation reservation(id, constantPrice, flight, passenger, ticketType, isCheckIn, isFlightFull);
+    Reservation reservation(id, constantPrice, flight, passenger, ticketType, false, false);
 
-    vector<int> updatedCapacity = flight->getCapacity();
-    for (size_t i = 0; i < updatedCapacity.size(); ++i)
+    int updatedCapacity = flight->getCapacity();
+    if (updatedCapacity > 0)
     {
-        if (updatedCapacity[i] > 0)
-        {
-            updatedCapacity[i]--;
-            break;
-        }
+        updatedCapacity--;
     }
+
     flight->setCapacity(updatedCapacity);
 
     reservations.push_back(reservation);
     reservationCount++;
 }
 
-void checkIn(int reservationId) {
+void checkIn(int reservationId)
+{
     int foundIndex = -1;
 
-    for (int i = 0; i < reservationCount; i++) {
-        if (reservations[i].getReservationId() == reservationId) {
+    for (int i = 0; i < reservationCount; i++)
+    {
+        if (reservations[i].getReservationId() == reservationId)
+        {
             foundIndex = i;
             break;
         }
     }
 
-    if (foundIndex == -1) {
+    if (foundIndex == -1)
+    {
         cout << "Reservation with ID " << reservationId << " not found." << endl;
         return;
     }
 
-    if (reservations[foundIndex].getIsCheckIn()) {
+    if (reservations[foundIndex].getIsCheckIn())
+    {
         cout << "Reservation with ID " << reservationId << " is already checked in." << endl;
         return;
     }
@@ -198,40 +203,42 @@ void deleteCustomer(int deletedCustomerId)
     }
 }
 
-void deleteReservation(int deletedReservationId) {
+void deleteReservation(int deletedReservationId)
+{
     int foundIndex = -1;
 
-    for (int i = 0; i < reservationCount; i++) {
-        if (reservations[i].getReservationId() == deletedReservationId) {
+    for (int i = 0; i < reservationCount; i++)
+    {
+        if (reservations[i].getReservationId() == deletedReservationId)
+        {
             foundIndex = i;
             break;
         }
     }
 
-    if (foundIndex == -1) {
+    if (foundIndex == -1)
+    {
         cout << "Reservation with ID " << deletedReservationId << " not found." << endl;
         return;
     }
-if (reservations[foundIndex].getIsCheckIn()) {
+
+    if (reservations[foundIndex].getIsCheckIn())
+    {
         cout << "The reservation with ID " << deletedReservationId << " is already checked-in." << endl;
 
         char choice;
         cout << "Do you want to proceed with the deletion? (y/n): ";
         cin >> choice;
 
-        if (choice != 'y' && choice != 'Y') {
+        if (choice != 'y' && choice != 'Y')
+        {
             cout << "Deletion canceled. No changes made." << endl;
             return;
         }
     }
 
     Flight *associatedFlight = reservations[foundIndex].getFlight();
-    vector<int> updatedCapacity = associatedFlight->getCapacity();
-    for (size_t i = 0; i < updatedCapacity.size(); ++i) {
-        updatedCapacity[i]++;
-        break;
-    }
-    associatedFlight->setCapacity(updatedCapacity);
+    associatedFlight->setCapacity(associatedFlight->getCapacity() + 1);
 
     Passenger *associatedPassenger = reservations[foundIndex].getPassenger();
     deletePassenger(associatedPassenger->getId());
@@ -240,6 +247,19 @@ if (reservations[foundIndex].getIsCheckIn()) {
     reservationCount--;
 
     cout << "Reservation with ID " << deletedReservationId << " deleted successfully, and associated passenger deleted." << endl;
+}
+
+bool updateFlight(Flight **flight, string *newDate, string *newTime)
+{
+    if (flight == nullptr || *flight == nullptr || newDate == nullptr || newTime == nullptr)
+    {
+        return false;
+    }
+
+    (*flight)->setDate(*newDate);
+    (*flight)->setTime(*newTime);
+
+    return true;
 }
 
 void deleteFlight(int deletedFlightId)
@@ -308,18 +328,4 @@ void deleteFlight(int deletedFlightId)
     flightCount--;
 
     cout << "Flight with ID " << deletedFlightId << " deleted successfully." << endl;
-}
-
-
-bool updateFlight(Flight **flight, string *newDate, string *newTime)
-{
-    if (flight == nullptr || *flight == nullptr || newDate == nullptr || newTime == nullptr)
-    {
-        return false;
-    }
-
-    (*flight)->setDate(*newDate);
-    (*flight)->setTime(*newTime);
-
-    return true;
 }

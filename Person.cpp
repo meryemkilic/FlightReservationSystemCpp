@@ -1,4 +1,4 @@
-#include "Person.h.cpp"
+#include "Person.h"
 #include <string>
 #include <iostream>
 #include <vector>
@@ -94,6 +94,8 @@ Customer::Customer(int id, const string &username, const string &password, const
 {
 }
 
+Manager::Manager(int id, const string &username, const string &password)
+    : Person(id, username, password, "", "", "", true) {}
 
 Passenger::Passenger(int id, const string passengerId, const string name, Customer *customer, PassengerType passengerType)
     : Person(id, "", "", name, "", "", false), customer(customer), passengerId(passengerId), passengerType(passengerType)
@@ -105,26 +107,32 @@ Passenger::Passenger()
 {
 }
 
-Customer* Passenger::getCustomer() const {
+Customer *Passenger::getCustomer() const
+{
     return customer;
 }
 
-void Passenger::setCustomer(Customer *newCustomer) {
+void Passenger::setCustomer(Customer *newCustomer)
+{
     customer = newCustomer;
 }
 
-string Passenger::getPassengerId() const {
+string Passenger::getPassengerId() const
+{
     return passengerId;
 }
 
-void Passenger::setPassengerId(const std::string &newPassengerId) {
+void Passenger::setPassengerId(const std::string &newPassengerId)
+{
     passengerId = newPassengerId;
 }
 
-PassengerType Passenger::getPassengerType() const {
+PassengerType Passenger::getPassengerType() const
+{
     return passengerType;
 }
 
-void Passenger::setPassengerType(PassengerType newPassengerType) {
+void Passenger::setPassengerType(PassengerType newPassengerType)
+{
     passengerType = newPassengerType;
 }

@@ -1,13 +1,20 @@
-#include "Reservation.h.cpp"
+#include "Reservation.h"
 #include <string>
 #include <iostream>
 #include <vector>
+#include <unordered_map>
+
 using namespace std;
 
 vector<Flight> flights;
 int flightCount = 0;
 
-Flight::Flight(int flightId, const string &date, const string &time, const vector<int> &capacity,
+static const unordered_map<AirlineCompany, string> airlineCompanyNames = {
+    {AirlineCompany::PEGASUS, "Pegasus"},
+    {AirlineCompany::TURKISH_AIRLINES, "Turkish Airlines"},
+    {AirlineCompany::ANADOLU_JET, "Anadolu Jet"}
+};
+Flight::Flight(int flightId, const string &date, const string &time, const int capacity,
                float baseFare, const string &departureCity, const string &arrivalCity,
                AirlineCompany airlineCompany, bool isDelayed)
     : flightId(flightId), date(date), time(time), capacity(capacity), baseFare(baseFare),
@@ -32,7 +39,7 @@ string Flight::getTime() const
     return time;
 }
 
-const vector<int> &Flight::getCapacity() const
+int Flight::getCapacity() const
 {
     return capacity;
 }
@@ -78,9 +85,12 @@ void Flight::setTime(const string &newTime)
     time = newTime;
 }
 
-void Flight::setCapacity(const vector<int> &newCapacity)
+void Flight::setCapacity(int newCapacity)
 {
-    capacity = newCapacity;
+    if (newCapacity >= 0)
+    {
+        capacity = newCapacity;
+    }
 }
 
 void Flight::setBaseFare(float newBaseFare)
