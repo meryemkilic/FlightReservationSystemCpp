@@ -11,7 +11,6 @@ Flight createFlight(const string &date, const string &time, const int capacity, 
                     AirlineCompany airlineCompany, bool isDelayed);
 void createReservation(Flight *flight, Passenger *passenger, TicketType ticketType);
 
-
 bool isFlightCapacityFull(const Flight *flight);
 void deleteCustomer(int deletedCustomerId);
 void deletePassenger(int deletedPassengerId);
@@ -19,8 +18,5 @@ void deleteFlight(int deletedFlightId);
 void deleteReservation(int deletedReservationId);
 bool updateFlight(Flight **flight, string *newDate, string *newTime);
 float calculateReservationPrice(const Flight *flight, const Passenger *passenger, TicketType ticketType);
-
-
-
 
 #endif

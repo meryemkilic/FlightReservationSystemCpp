@@ -5,7 +5,7 @@
 using namespace std;
 
 vector<Reservation> reservations;
-int reservationCount=0;
+int reservationCount = 0;
 
 Reservation::Reservation(int reservationId, float constantPrice, Flight *flight, Passenger *passenger, TicketType ticketType,
                          bool isCheckIn, bool isFlightFull)
@@ -13,6 +13,8 @@ Reservation::Reservation(int reservationId, float constantPrice, Flight *flight,
       ticketType(ticketType), isCheckIn(isCheckIn), isFlightFull(isFlightFull)
 {
 }
+
+Reservation::Reservation() : reservationId(0), constantPrice(0), flight(nullptr), passenger(nullptr), ticketType(), isCheckIn(false), isFlightFull(false) {}
 
 int Reservation::getReservationId() const
 {

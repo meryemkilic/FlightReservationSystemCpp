@@ -12,13 +12,13 @@ void writeCustomersToFile();
 void writeReservationsToFile();
 void writeFlightsToFile();
 
-void deleteCustomerFromFile(string username);
 void deleteReservationFromFile(int deletedReservationId);
 void deleteFlightFromFile(int deletedFlightId);
 
 Flight* findFlightById(int selectedFlight);
 Passenger* findPassengerById(int selectedPassenger);
 Reservation* findReservationById(int selectedreservationId);
+void readReservationsFromFile(const string &filename, void (*processReservation)(const Reservation *), const Customer *customerAccount);
 
 
 #endif

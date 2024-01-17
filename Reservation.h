@@ -7,6 +7,7 @@ using namespace std;
 #include <vector>
 #include <string>
 #include <iomanip>
+#include <ctime>
 #include "Flight.h"
 #include "Person.h"
 
@@ -30,6 +31,7 @@ private:
 public:
     Reservation(int reservationId, float constantPrice, Flight *flight, Passenger *passenger, TicketType ticketType,
                 bool isCheckIn, bool isFlightFull);
+    Reservation();
 
     string ticketTypeToString(TicketType type) const
     {
@@ -64,35 +66,37 @@ class Ticket
 {
 private:
     int reservationId;
-    float constantPrice;
     int flightId;
     int passengerId;
+    time_t reservationTime;
+    string passengerName;
+    string arrivalCity;
+    string departureCity;
+    string airlineComp;
     string ticketType;
-    string checkInStatus;
-    string flightFullStatus;
+    float constantPrice;
+    friend class Reservation;
 
 public:
     Ticket(const Reservation &reservation)
-        : reservationId(reservation.getReservationId()), constantPrice(reservation.getConstantPrice()),
-          flightId(reservation.getFlight()->getFlightId()), passengerId(reservation.getPassenger()->getId()),
-          ticketType(reservation.ticketTypeToString(reservation.getTicketType())),
-          checkInStatus(reservation.getIsCheckIn() ? "Yes" : "No"),
-          flightFullStatus(reservation.getIsFlightFull() ? "Yes" : "No") {}
+        : reservationId(reservation.getReservationId()), flightId(reservation.getFlight()->getFlightId()), passengerId(reservation.getPassenger()->getId()),
+          reservationTime(time(0)), passengerName(reservation.getPassenger()->getName()), arrivalCity(reservation.getFlight()->getArrivalCity()), departureCity(reservation.getFlight()->getDepartureCity()),
+          ticketType(reservation.ticketTypeToString(reservation.getTicketType())), constantPrice(reservation.getConstantPrice()) {}
 
     friend ostream &operator<<(ostream &os, const Ticket &ticket)
     {
+        os << "Reservation Time: " << ticket.reservationTime << '\n';
         os << "Reservation ID: " << ticket.reservationId << '\n';
-        os << "Price: " << fixed << setprecision(2) << ticket.constantPrice << '\n';
         os << "Flight ID: " << ticket.flightId << '\n';
         os << "Passenger ID: " << ticket.passengerId << '\n';
+        os << "Passenger Name: " << ticket.passengerName << '\n';
+        os << "Route: " << ticket.arrivalCity << " - " << ticket.departureCity << '\n';
         os << "Ticket Type: " << ticket.ticketType << '\n';
-        os << "Check-In: " << ticket.checkInStatus << '\n';
-        os << "Flight Full: " << ticket.flightFullStatus << '\n';
+        os << "Price: " << fixed << setprecision(2) << ticket.constantPrice << '\n';
 
         return os;
     }
 };
-
 
 extern vector<Reservation> reservations;
 extern int reservationCount;

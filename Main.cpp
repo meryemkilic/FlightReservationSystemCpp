@@ -271,7 +271,6 @@ int main()
                     cout << "Arrival City: " << flight.getArrivalCity() << '\n';
                     cout << "Airline Company: " << flight.airlineToString(flight.getAirlineCompany()) << '\n';
                     cout << "Is Delayed: " << (flight.getIsDelayed() ? "Yes" : "No") << '\n';
-                    
                 }
                 cout << "\n\nPlease enter the flight ID to delete:   ";
                 cin >> flightId;
@@ -649,12 +648,13 @@ int main()
                 break;
 
             case 6:
-
+                void createTicketFile(const Customer *customerAccount);
                 for (const Reservation &reservation : reservations)
                 {
                     if (reservation.getPassenger()->getCustomer() == customerAccount)
                     {
-                        readReservationsFromFile(RESERVATION_FILE, &createTicket, customerAccount);
+
+                        // readReservationsFromFile(RESERVATION_FILE, &createTicket, customerAccount);
                     }
                 }
 
