@@ -18,7 +18,7 @@ void deleteFlightFromFile(int deletedFlightId);
 Flight* findFlightById(int selectedFlight);
 Passenger* findPassengerById(int selectedPassenger);
 Reservation* findReservationById(int selectedreservationId);
-void readReservationsFromFile(const string &filename, void (*processReservation)(const Reservation *), const Customer *customerAccount);
-
+//void readReservationsFromFile(const string &filename, void (*processReservation)(const Reservation *), const Customer *customerAccount);
+vector<Reservation> readReservationsFromFile(const string& filename, Customer* c);
 
 #endif

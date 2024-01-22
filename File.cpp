@@ -56,37 +56,7 @@ Reservation *findReservationById(int selectedreservationId)
          << endl;
     return nullptr;
 }
-
-void createTicket(const Reservation *reservation)
-{
-    if (!reservation)
-    {
-        cerr << "Invalid reservation\n";
-        return;
-    }
-
-    ostringstream filenameStream;
-    filenameStream << "ticket_" << reservation->getReservationId() << ".txt";
-    string filename = filenameStream.str();
-
-    ofstream file(filename);
-    if (!file.is_open())
-    {
-        cerr << "Error opening ticket file" << endl;
-        return;
-    }
-
-    file << "Reservation ID: " << reservation->getReservationId() << '\n';
-    file << "Price: " << fixed << setprecision(2) << reservation->getConstantPrice() << '\n';
-    file << "Flight ID: " << reservation->getFlight()->getFlightId() << '\n';
-    file << "Passenger ID: " << reservation->getPassenger()->getId() << '\n';
-    file << "Ticket Type: " << reservation->ticketTypeToString(reservation->getTicketType()) << '\n';
-    file << "Check-In: " << (reservation->getIsCheckIn() ? "Yes" : "No") << '\n';
-    file << "Flight Full: " << (reservation->getIsFlightFull() ? "Yes" : "No") << '\n';
-
-    cout << "Ticket created for Reservation ID " << reservation->getReservationId() << endl;
-    cout << "Ticket created successfully. Download the " << filename << " file.\n";
-}
+ 
 void writeCustomersToFile()
 {
 
@@ -141,79 +111,35 @@ void writeReservationsToFile()
     cout << "Reservations written to file successfully." << endl;
 }
 
-void readReservationsFromFile(const std::string &filename, void (*processReservation)(const Reservation *), const Customer *customerAccount)
+vector<Reservation> readReservationsFromFile(const string &filename, Customer *c)
 {
-    std::ifstream file(filename);
+    vector<Reservation> matchedReservations;
+    ifstream file(filename);
+
     if (!file.is_open())
     {
-        std::cerr << "Error opening reservation file" << std::endl;
-        return;
+        cerr << "Openning File Error!" << endl;
+        return matchedReservations;
     }
 
-    int reservationId, passengerId, flightId;
-    std::string passengerName, departureCity, arrivalCity, ticketTypeStr;
-    float constantPrice;
-    bool isCheckIn;
-    Passenger *passenger;
-    Flight *flight;
-
-    while (file >> reservationId >> passengerId >> passengerName >> flightId >> departureCity >> arrivalCity >> constantPrice >> ticketTypeStr >> isCheckIn)
+    string line;
+    while (getline(file, line))
     {
-        TicketType ticketType;
-        if (ticketTypeStr == "Economy")
-        {
-            ticketType = TicketType::ECONOMY;
-        }
-        else if (ticketTypeStr == "First Class")
-        {
-            ticketType = TicketType::FIRST_CLASS;
-        }
-        else
-        {
-            std::cerr << "Unknown ticket type: " << ticketTypeStr << std::endl;
-            continue;
-        }
+        stringstream ss(line);
+        int reservationId, passengerId, flightId;
+        string passengerName, departureCity, arrivalCity, ticketTypeStr;
+        float constantPrice;
+        bool isCheckIn;
 
-        passenger = findPassengerById(passengerId);
-        flight = findFlightById(flightId);
+        ss >> reservationId >> passengerId >> passengerName >> flightId >> departureCity >> arrivalCity >> constantPrice >> ticketTypeStr >> isCheckIn;
 
-        if (!passenger || !flight)
+        Reservation *res = findReservationById(reservationId);
+        if (res != nullptr && res->getPassenger()->getCustomer()->getId() == c->getId())
         {
-            std::cerr << "Invalid passenger or flight ID" << std::endl;
-            continue;
-        }
-
-        if (passenger->getCustomer() == customerAccount)
-        {
-            Reservation reservation(reservationId, constantPrice, flight, passenger, ticketType, isCheckIn, false);
-
-            processReservation(&reservation);
+            matchedReservations.push_back(*res);
         }
     }
 
     file.close();
-}
-
-void createTicketFile(const Customer *customerAccount)
-{
-
-    for (Reservation reservation : reservations)
-    {
-        if (reservation.getPassenger()->getCustomer() == customerAccount)
-        {
-            Ticket newTicket(reservation);
-            string filename = "ticket_" + to_string(reservation.getReservationId()) + ".txt";
-            ofstream outputFile(filename);
-            if (outputFile.is_open())
-            {
-                outputFile << newTicket;
-                cout << "Ticket information has been written to " << filename << endl;
-                outputFile.close();
-            }
-            else
-            {
-                cerr << "Unable to open the file." << endl;
-            }
-        }
-    }
+    return matchedReservations;
 }

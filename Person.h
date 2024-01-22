@@ -22,7 +22,7 @@ private:
     string name;
     string email;
     string phone;
-    bool isManager; // Yeni eklenen özellik
+    bool isManager;
 
 public:
     virtual ~Person() {}

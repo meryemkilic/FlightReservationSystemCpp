@@ -1,3 +1,4 @@
-3001 Istanbul Ankara 20.01.2024 12:00 500 Pegasus 0
+3001 Istanbul Ankara 2024.01.19 19:00 500 Pegasus 1
 3002 Istanbul Ankara 20.01.2024 12:00 600 Turkish Airlines 0
 3003 Istanbul Ankara 20.01.2024 12:00 400 Anadolu Jet 0
+3004 Ankara Istanbul 19.01.2024 19:00 500 Pegasus 0

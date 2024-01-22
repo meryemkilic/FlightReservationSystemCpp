@@ -1,1 +1,1 @@
-5001 101 meryem 3001 Istanbul Ankara 4600 First Class 0
+5001 101 m 3001 Istanbul Ankara 26680 First Class 0

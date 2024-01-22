@@ -303,6 +303,7 @@ void deleteFlight(int deletedFlightId)
                 cin >> newTime;
 
                 updateFlight(&deletedFlight, &newDate, &newTime);
+                deletedFlight->setIsDelayed(true);
 
                 cout << "Flight delayed successfully." << endl;
                 return;
@@ -330,46 +331,59 @@ void deleteFlight(int deletedFlightId)
     cout << "Flight with ID " << deletedFlightId << " deleted successfully." << endl;
 }
 
-void displayNotifications(const Customer* customerAccount, const vector<Reservation>& reservations, bool& hasNotification, int& trigger) {
+void displayNotifications(const Customer *customerAccount, const vector<Reservation> &reservations, bool &hasNotification, int &trigger)
+{
     cout << "\n----------       - Notifications -       ----------\n";
 
-    if (trigger == 0) {
-        for (const Reservation& reservation : reservations) {
-            if (reservation.getPassenger()->getCustomer() == customerAccount && reservation.getFlight()->getIsDelayed()) {
-                hasNotification = true;
+    for (const Reservation &reservation : reservations)
+    {
+        if ((reservation.getPassenger()->getCustomer() == customerAccount) && reservation.getFlight()->getIsDelayed())
+        {
+            hasNotification = true;
+            if (trigger == 0)
+            {
                 cout << "You have a notification.\n";
-                cout << "Dear " << customerAccount->getName() << ",\nYour "
-                          << reservation.getFlight()->getDepartureCity() << " - "
-                          << reservation.getFlight()->getArrivalCity() << " flight number "
-                          << reservation.getFlight()->getFlightId() << " was delayed.\n"
-                          << "We are sorry for the delay, we wish you a pleasant flight!\n";
-
-                trigger = 1;
-                break;
             }
-        }
-
-        if (!hasNotification) {
-            cout << "\nYou have no notifications.\n";
-        }
-    } else {
-        // Display existing notifications or perform other actions
-        for (const Reservation& reservation : reservations) {
-            if (reservation.getPassenger()->getCustomer() == customerAccount && reservation.getFlight()->getIsDelayed()) {
-                hasNotification = true;
+            else
+            {
                 cout << "You have existing notifications.\n";
-                cout << "Dear " << customerAccount->getName() << ",\nYour "
-                          << reservation.getFlight()->getDepartureCity() << " - "
-                          << reservation.getFlight()->getArrivalCity() << " flight number "
-                          << reservation.getFlight()->getFlightId() << " was delayed.\n"
-                          << "We are sorry for the delay, we wish you a pleasant flight!\n";
-                // Additional actions related to existing notifications can be added here
-                break;
             }
+            cout << "Dear " << customerAccount->getName() << ",\nYour "
+                 << reservation.getFlight()->getDepartureCity() << " - "
+                 << reservation.getFlight()->getArrivalCity() << " flight number "
+                 << reservation.getFlight()->getFlightId() << " was delayed.\n"
+                 << "We are sorry for the delay, we wish you a pleasant flight!\n";
+
+            trigger = 1;
+            break;
+        }
+    }
+
+    if (!hasNotification)
+    {
+        cout << "\nYou have no notifications.\n";
+    }
+}
+
+void createTicket(const string &reservationsFilename, Customer *customer)
+{
+    vector<Reservation> myReservations = readReservationsFromFile(reservationsFilename, customer);
+
+    for (const Reservation &res : reservations)
+    {
+        Ticket ticket(res);
+        string ticketFilename = "ticket_" + to_string(res.getReservationId()) + ".txt";
+        ofstream ticketFile(ticketFilename);
+
+        if (!ticketFile.is_open())
+        {
+            cerr << "Error opening ticket file: " << ticketFilename << endl;
+            continue;
         }
 
-        if (!hasNotification) {
-            cout << "\nYou have no existing notifications.\n";
-        }
+        ticketFile << ticket;
+        ticketFile.close();
+
+        cout << "Ticket written to file: " << ticketFilename << endl;
     }
 }

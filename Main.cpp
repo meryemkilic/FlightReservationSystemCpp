@@ -59,6 +59,7 @@ int main()
     writeReservationsToFile();
     Passenger *p;
     string username;
+    string newDate, newTime;
     string password;
     string name;
     string surname;
@@ -354,7 +355,15 @@ int main()
                     cout << "\nFlight not found!\n";
                     break;
                 }
+
+                cout << "Enter the new date for the delayed flight (YYYY-MM-DD): ";
+                cin >> newDate;
+                cout << "Enter the new time for the delayed flight (HH:mm): ";
+                cin >> newTime;
+
+                updateFlight(&delayedFlight, &newDate, &newTime);
                 delayedFlight->setIsDelayed(true);
+
                 writeFlightsToFile();
                 cout << "\nDelay added to the flight successfully!\n";
                 break;
@@ -535,7 +544,6 @@ int main()
                         if (reservation.getPassenger()->getCustomer() == customerAccount)
                         {
                             cout << "Amount: " << reservation.getConstantPrice() << '\n';
-                            break;
                         }
                     }
 
@@ -547,15 +555,11 @@ int main()
                         cout << "\nReservation created successfully!\n";
                         cout << "\nPayment successful! Thank you for your reservation.\n";
                         writeReservationsToFile();
-                        break;
                     }
                     else
                     {
                         cout << "The reservation could not be created.\n";
-                        break;
                     }
-
-                    break;
                 }
                 break;
 
@@ -604,13 +608,10 @@ int main()
                     cout << "You cannot cancel this reservation because you have already checked in.\n";
                     break;
                 }
-                else
-                {
-                    deleteReservation(reservationId);
-                    writeReservationsToFile();
-                    cout << "\nReservation canceled successfully!\n";
-                    break;
-                }
+
+                deleteReservation(reservationId);
+                writeReservationsToFile();
+                cout << "\nReservation canceled successfully!\n";
 
                 break;
             case 5:
@@ -635,7 +636,6 @@ int main()
                         {
                             reservation.setIsCheckIn(true);
                             cout << "\nCheck-In process completed.\n";
-                            break;
                         }
                     }
                 }
@@ -648,15 +648,7 @@ int main()
                 break;
 
             case 6:
-                void createTicketFile(const Customer *customerAccount);
-                for (const Reservation &reservation : reservations)
-                {
-                    if (reservation.getPassenger()->getCustomer() == customerAccount)
-                    {
-
-                        // readReservationsFromFile(RESERVATION_FILE, &createTicket, customerAccount);
-                    }
-                }
+                createTicket(RESERVATION_FILE, customerAccount);
 
                 break;
             case 7:
